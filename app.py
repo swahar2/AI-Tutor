@@ -30,6 +30,7 @@ def load_model():
         # Load the entire model using torch.load, mapping to CPU
         model = torch.load(MODEL_FILE, map_location=torch.device('cpu'))
         st.success("Model loaded successfully using torch.load!")
+        st.write(f"Model: {model}")  # Add this line to print the model
         return model
     except Exception as e:
         st.error(f"Error loading the model with torch.load: {e}")
@@ -76,5 +77,3 @@ if model:
             st.success(f"Predicted Band Score: {prediction}")
         except Exception as e:
             st.error(f"Prediction error: {e}")
-    else:
-        st.warning("Model not loaded. Prediction is unavailable.")
