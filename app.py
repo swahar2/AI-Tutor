@@ -15,6 +15,7 @@ torch.set_default_device('cpu')  # Add this line
 st.write(f"Python version: {sys.version}")
 st.write(f"Torch version: {torch.__version__}")
 st.write(f"CUDA is available: {torch.cuda.is_available()}")
+st.write(f"Transformers version: {transformers.__version__}") 
 
 MODEL_FILE = "band_predictor_model_torch.pth"
 MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/resolve/main/band_predictor_model.pkl"
@@ -36,6 +37,11 @@ st.title("IELTS Band Predictor")
 
 if model:
     essay = st.text_area("Enter Essay Text")
+    prompt = st.text_area("Enter Prompt Text")
+    task = st.text_area("Enter Task Achievement Text")
+    coherence = st.text_area("Enter Coherence and Cohesion Text")
+    vocab = st.text_area("Enter Lexical Resource Text")
+    grammar = st.text_area("Enter Grammatical Range and Accuracy Text")
     task = st.slider("Task Achievement", 0.0, 9.0, 6.0)
     coherence = st.slider("Coherence & Cohesion", 0.0, 9.0, 6.0)
     vocab = st.slider("Vocabulary", 0.0, 9.0, 6.0)
