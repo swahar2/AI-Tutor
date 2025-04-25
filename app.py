@@ -7,9 +7,7 @@ MODEL_FILE = "band_predictor_model.pkl"
 MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/resolve/main/band_predictor_model.pkl"
 
 def download_file(url, filename):
-    headers = {
-        "Authorization": f"Bearer {os.environ.get('HF_TOKEN')}"
-    }
+    headers = {"Authorization": f"Bearer {st.secrets['HF_TOKEN']}"}
     r = requests.get(url, headers=headers, stream=True)
     print(f"Status: {r.status_code}")
     r.raise_for_status()
