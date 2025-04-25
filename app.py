@@ -123,5 +123,5 @@ if model:
             prediction = torch.argmax(logits, dim=-1).item()  # Get the predicted class
 
         st.success(f"Predicted Band Score: {prediction}")
-    except Exception as e:
+      except Exception as e:
         st.error(f"Prediction error: {e}")
