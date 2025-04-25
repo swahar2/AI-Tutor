@@ -3,6 +3,7 @@ import joblib
 import requests
 import os
 import torch
+import sys 
 
 st.write(f"Python version: {sys.version}")
 st.write(f"Torch version: {torch.__version__}")
