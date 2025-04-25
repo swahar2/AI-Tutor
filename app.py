@@ -21,7 +21,7 @@ st.write(f"CUDA is available: {torch.cuda.is_available()}")
 tokenizer = transformers.BertTokenizer.from_pretrained('bert-base-uncased')  # Use the same tokenizer as during training
 
 MODEL_FILE = "band_predictor_model_torch.pth"
-MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/resolve/main/band_predictor_model.pkl"
+MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/resolve/main/band_predictor_model_torch.pth"
 
 @st.cache_resource
 def load_model():
