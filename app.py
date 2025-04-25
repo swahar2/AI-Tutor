@@ -2,6 +2,7 @@ import streamlit as st
 import joblib
 import requests
 import os
+import sys
 
 # Force CPU usage BEFORE importing torch
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
