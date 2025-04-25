@@ -1,10 +1,6 @@
 streamlit
+torch
+transformers
 joblib
 pandas
 requests
-transformers
-uvicorn
-pydantic
-scikit-learn
-numpy
-torch
