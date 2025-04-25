@@ -2,6 +2,7 @@ import streamlit as st
 import joblib
 import requests
 import os
+import torch
 
 MODEL_FILE = "band_predictor_model.pkl"
 MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/resolve/main/band_predictor_model.pkl"
