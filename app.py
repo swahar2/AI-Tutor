@@ -40,4 +40,4 @@ if st.button("Predict Band"):
         'grammar_score': grammar
     }])
     band = model.predict(df)[0]
-    st.success(f"Predicted Band Score: {round(band, 2)}")
+    st.success(f"Predicted Band Score: {round(band,2)}")
