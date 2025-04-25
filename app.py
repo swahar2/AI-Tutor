@@ -25,7 +25,7 @@ if not os.path.exists(MODEL_FILE):
     st.success("Model ready!")
 
 # Load the model
-model = joblib.load(MODEL_FILE)
+model = torch.load(MODEL_FILE, map_location=torch.device('cpu'))
 
 st.title("IELTS Band Predictor")
 
