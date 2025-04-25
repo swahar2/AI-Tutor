@@ -17,6 +17,7 @@ torch.set_default_device('cpu')  # Add this line
 st.write(f"Python version: {sys.version}")
 st.write(f"Torch version: {torch.__version__}")
 st.write(f"CUDA is available: {torch.cuda.is_available()}")
+st.write(f"Files in current directory: {os.listdir()}") 
 
 tokenizer = transformers.BertTokenizer.from_pretrained('bert-base-uncased')  # Use the same tokenizer as during training
 
