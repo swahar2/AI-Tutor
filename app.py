@@ -4,7 +4,7 @@ import requests
 import os
 
 MODEL_FILE = "band_predictor_model.pkl"
-MODEL_URL = "https://huggingface.co/swashar2/AI-Tutor/resolve/main/band_predictor_model.pkl"
+MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/blob/main/band_predictor_model.pkl"
 
 def download_file(url: str, destination: str):
     with requests.get(url, stream=True) as r:
@@ -40,4 +40,4 @@ if st.button("Predict Band"):
         'grammar_score': grammar
     }])
     band = model.predict(df)[0]
-    st.success(f"Predicted Band Score: {round(band,2)}")
+    st.success(f"Predicted Band Score: {round(band, 2)}")
