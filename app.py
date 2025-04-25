@@ -4,15 +4,20 @@ import requests
 import os
 
 MODEL_FILE = "band_predictor_model.pkl"
-MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/blob/main/band_predictor_model.pkl"
+MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/resolve/main/band_predictor_model.pkl"
 
-def download_file(url: str, destination: str):
-    with requests.get(url, stream=True) as r:
-        r.raise_for_status()
-        with open(destination, "wb") as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                if chunk:
-                    f.write(chunk)
+def download_file(url, filename):
+    headers = {
+        "Authorization": f"Bearer {os.environ.get('HF_TOKEN')}"
+    }
+    r = requests.get(url, headers=headers, stream=True)
+    print(f"Status: {r.status_code}")
+    r.raise_for_status()
+
+    with open(filename, "wb") as f:
+        for chunk in r.iter_content(chunk_size=8192):
+            if chunk:
+              f.write(chunk)
 
 # Download if not present
 if not os.path.exists(MODEL_FILE):
