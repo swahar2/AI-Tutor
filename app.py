@@ -15,7 +15,6 @@ torch.set_default_device('cpu')  # Add this line
 st.write(f"Python version: {sys.version}")
 st.write(f"Torch version: {torch.__version__}")
 st.write(f"CUDA is available: {torch.cuda.is_available()}")
-st.write(f"Transformers version: {transformers.__version__}") 
 
 MODEL_FILE = "band_predictor_model_torch.pth"
 MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/resolve/main/band_predictor_model.pkl"
