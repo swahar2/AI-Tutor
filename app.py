@@ -73,9 +73,15 @@ def load_model():
                 return None
 
         # Load the entire model using torch.load, mapping to CPU
-        model = torch.load(MODEL_FILE, map_location=torch.device('cpu'))
-        st.success("Model loaded successfully using torch.load!")
-        st.write(f"Model: {model}")  # Print the model
+        model = CustomBertClassifier(bert_model_name='bert-base-uncased', num_labels=2, num_numerical_features=4)
+
+        # Load the state_dict
+        state_dict = torch.load(MODEL_FILE, map_location=torch.device('cpu'))
+
+        # Load the state_dict into the model
+        model.load_state_dict(state_dict)
+
+        st.success("Model loaded successfully!")
         return model
     except Exception as e:
         st.error(f"Error loading the model: {e}")
