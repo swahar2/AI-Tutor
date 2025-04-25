@@ -4,7 +4,10 @@ import requests
 import os
 import torch
 
-MODEL_FILE = "band_predictor_model.pkl"
+st.write(f"Python version: {sys.version}")
+st.write(f"Torch version: {torch.__version__}")
+
+MODEL_FILE = "band_predictor_model_torch.pth"
 MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/resolve/main/band_predictor_model.pkl"
 
 def download_file(url, filename):
@@ -28,7 +31,7 @@ if not os.path.exists(MODEL_FILE):
 os.environ["CUDA_VISIBLE_DEVICES"] = ""    
 
 # Load the model
-model = torch.load(MODEL_FILE, map_location=torch.device('cpu'))
+model = torch.load(MODEL_FILE, map_location=torch.device('cpu'), weights_only=False)
 
 st.title("IELTS Band Predictor")
 
