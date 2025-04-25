@@ -3,6 +3,8 @@ import joblib
 import requests
 import os
 import sys
+import transformers
+
 
 # Force CPU usage BEFORE importing torch
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
@@ -15,6 +17,8 @@ torch.set_default_device('cpu')  # Add this line
 st.write(f"Python version: {sys.version}")
 st.write(f"Torch version: {torch.__version__}")
 st.write(f"CUDA is available: {torch.cuda.is_available()}")
+
+tokenizer = transformers.BertTokenizer.from_pretrained('bert-base-uncased')  # Use the same tokenizer as during training
 
 MODEL_FILE = "band_predictor_model_torch.pth"
 MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/resolve/main/band_predictor_model.pkl"
