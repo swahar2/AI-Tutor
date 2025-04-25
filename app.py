@@ -24,6 +24,9 @@ if not os.path.exists(MODEL_FILE):
     download_file(MODEL_URL, MODEL_FILE)
     st.success("Model ready!")
 
+# Force CPU usage
+os.environ["CUDA_VISIBLE_DEVICES"] = ""    
+
 # Load the model
 model = joblib.load(MODEL_FILE, map_location=torch.device('cpu'))
 
