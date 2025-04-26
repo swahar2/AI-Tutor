@@ -6,6 +6,28 @@ import transformers
 import requests
 from torch import nn
 
+# Define a custom model
+class CustomBertClassifier(nn.Module):
+    def __init__(self, bert_model_name, num_labels, num_numerical_features):
+        super(CustomBertClassifier, self).__init__()
+        self.bert = transformers.BertForSequenceClassification.from_pretrained(bert_model_name, num_labels=num_labels)
+        self.linear = nn.Linear(num_numerical_features, 768)  # Adjust input size
+        self.classifier = nn.Linear(768 * 2, num_labels) # BERT output + numerical features
+
+    def forward(self, input_ids, attention_mask, task, coherence, vocab, grammar):
+        bert_output = self.bert(input_ids, attention_mask=attention_mask)
+        pooled_output = bert_output.bert.pooler.dense(bert_output.last_hidden_state[:, 0]) # Access pooler_output
+
+        numerical_features = torch.cat((task.unsqueeze(1), coherence.unsqueeze(1), vocab.unsqueeze(1), grammar.unsqueeze(1)), dim=1).float()
+        numerical_embedding = self.linear(numerical_features)
+
+        # Concatenate the BERT output with the numerical features
+        combined_features = torch.cat((pooled_output, numerical_embedding), dim=1) # Concatenate along the dimension 1
+
+        # Pass the combined features to the classifier
+        logits = self.classifier(combined_features)
+        return transformers.modeling_outputs.SequenceClassifierOutput(logits=logits, loss=None) # Loss needs to be none
+
 # Force CPU usage BEFORE importing torch
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
@@ -25,29 +47,6 @@ tokenizer = transformers.BertTokenizer.from_pretrained('bert-base-uncased')  # U
 
 MODEL_FILE = "band_predictor_model_torch.pth"
 MODEL_URL = "https://huggingface.co/swahar2/AI-Tutor/resolve/main/band_predictor_model_torch.pth"
-
-
-class CustomBertClassifier(nn.Module):
-    def __init__(self, bert_model_name, num_labels, num_numerical_features):
-        super(CustomBertClassifier, self).__init__()
-        self.bert = transformers.BertForSequenceClassification.from_pretrained(bert_model_name, num_labels=num_labels)
-        self.linear = nn.Linear(num_numerical_features, 768)  # Adjust input size
-        self.classifier = nn.Linear(768 * 2, num_labels) # BERT output + numerical features
-
-    def forward(self, input_ids, attention_mask, task, coherence, vocab, grammar):
-        bert_output = self.bert(input_ids, attention_mask=attention_mask)
-        pooled_output = bert_output.pooler_output # Access pooler_output
-
-        numerical_features = torch.cat((task.unsqueeze(1), coherence.unsqueeze(1), vocab.unsqueeze(1), grammar.unsqueeze(1)), dim=1).float()
-        numerical_embedding = self.linear(numerical_features)
-
-        # Concatenate the BERT output with the numerical features
-        combined_features = torch.cat((pooled_output, numerical_embedding), dim=1) # Concatenate along the dimension 1
-
-        # Pass the combined features to the classifier
-        logits = self.classifier(combined_features)
-        return transformers.modeling_outputs.SequenceClassifierOutput(logits=logits, loss=None) # Loss needs to be none
-
 
 def download_model(url, filename):
     try:
@@ -72,7 +71,7 @@ def load_model():
                 st.error("Failed to download model. Aborting.")
                 return None
 
-        # Load the entire model using torch.load, mapping to CPU
+        # Load the custom model
         model = CustomBertClassifier(bert_model_name='bert-base-uncased', num_labels=2, num_numerical_features=4)
 
         # Load the state_dict
@@ -102,32 +101,35 @@ if model:
     grammar = st.slider("Grammatical Range and Accuracy", 0.0, 9.0, 6.0)
 
     if st.button("Predict Band"):
-      try:
-        # Preprocess the input data
-        encoded_input = tokenizer(
-            essay,
-            padding='max_length',
-            truncation=True,
-            max_length=128,  # Or whatever max length you used
-            return_tensors='pt'  # Return PyTorch tensors
-        )
+        try:
+            # Preprocess the input data
+            encoded_input = tokenizer(
+                essay,
+                padding='max_length',
+                truncation=True,
+                max_length=128,  # Or whatever max length you used
+                return_tensors='pt'  # Return PyTorch tensors
+            )
 
-        # Get the input IDs and attention mask
-        input_ids = encoded_input['input_ids'].to('cpu')
-        attention_mask = encoded_input['attention_mask'].to('cpu')
+            # Get the input IDs and attention mask
+            input_ids = encoded_input['input_ids'].to('cpu')
+            attention_mask = encoded_input['attention_mask'].to('cpu')
 
-        # Convert numerical features to tensors
-        task_tensor = torch.tensor([task]).to('cpu')
-        coherence_tensor = torch.tensor([coherence]).to('cpu')
-        vocab_tensor = torch.tensor([vocab]).to('cpu')
-        grammar_tensor = torch.tensor([grammar]).to('cpu')
+            # Convert numerical features to tensors
+            task_tensor = torch.tensor([task]).to('cpu')
+            coherence_tensor = torch.tensor([coherence]).to('cpu')
+            vocab_tensor = torch.tensor([vocab]).to('cpu')
+            grammar_tensor = torch.tensor([grammar]).to('cpu')
 
-        # Pass the preprocessed data to the model
-        with torch.no_grad():  # Disable gradient calculation during inference
-            outputs = model(input_ids, attention_mask=attention_mask, task=task_tensor, coherence=coherence_tensor, vocab=vocab_tensor, grammar=grammar_tensor)  # Pass all inputs
-            logits = outputs.logits  # Assuming your model returns logits
-            prediction = torch.argmax(logits, dim=-1).item()  # Get the predicted class
+            # Pass the preprocessed data to the model
+            with torch.no_grad():  # Disable gradient calculation during inference
+                outputs = model(input_ids, attention_mask=attention_mask, task=task_tensor, coherence=coherence_tensor, vocab=vocab_tensor, grammar=grammar_tensor)  # Pass all inputs
+                logits = outputs.logits  # Assuming your model returns logits
+                prediction = torch.argmax(logits, dim=-1).item()  # Get the predicted class
 
-        st.success(f"Predicted Band Score: {prediction}")
-      except Exception as e:
-        st.error(f"Prediction error: {e}")
+            st.success(f"Predicted Band Score: {prediction}")
+        except Exception as e:
+            st.error(f"Prediction error: {e}")
+            st.error(f"Error type: {type(e).__name__}")  # Get the error type
+            st.error(f"Error message: {str(e)}")        # Get the error message
+            st.error(f"Full traceback: {sys.exc_info()[2]}") # Get the full traceback
