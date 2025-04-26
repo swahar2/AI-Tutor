@@ -12,17 +12,17 @@ import numpy as np
 # Force CPU usage BEFORE importing torch
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
-import torch  
+import torch  # Import torch AFTER setting CUDA_VISIBLE_DEVICES
 
 # Set default device to CPU
-torch.set_default_device('cpu')   
+torch.set_default_device('cpu')  # Add this line
 
 st.write(f"Python version: {sys.version}")
 st.write(f"Torch version: {torch.__version__}")
 st.write(f"Transformers version: {transformers.__version__}")
 st.write(f"CUDA is available: {torch.cuda.is_available()}")
 
-MODEL_NAME = "swahar2/AI-Tutor"   
+MODEL_NAME = "swahar2/AI-Tutor"  # Replace with your Hugging Face Hub repo name
 
 # Load tokenizer and model
 tokenizer = RobertaTokenizer.from_pretrained(MODEL_NAME)
@@ -30,7 +30,8 @@ tokenizer = RobertaTokenizer.from_pretrained(MODEL_NAME)
 @st.cache_resource
 def load_model():
     try:
-        model = RobertaForSequenceClassification.from_pretrained(MODEL_NAME, map_location=torch.device('cpu'))
+        model = RobertaForSequenceClassification.from_pretrained(MODEL_NAME)
+        model.to('cpu')  # Move the entire model to the CPU
         st.success("Model loaded successfully from Hugging Face Hub!")
         return model
     except Exception as e:
@@ -55,8 +56,8 @@ if model:
                 feature_text,
                 padding='max_length',
                 truncation=True,
-                max_length=512,  
-                return_tensors='pt'  
+                max_length=512,  # Or whatever max length you used during training
+                return_tensors='pt'  # Return PyTorch tensors
             )
 
             # Get the input IDs and attention mask
