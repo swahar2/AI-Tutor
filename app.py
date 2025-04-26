@@ -30,7 +30,7 @@ tokenizer = RobertaTokenizer.from_pretrained(MODEL_NAME)
 @st.cache_resource
 def load_model():
     try:
-        model = RobertaForSequenceClassification.from_pretrained(MODEL_NAME)
+        model = RobertaForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2)
         model.to('cpu')  # Move the entire model to the CPU
         st.success("Model loaded successfully from Hugging Face Hub!")
         return model
@@ -46,7 +46,7 @@ if model:
     essay = st.text_area("Enter Essay Text")
     prompt = st.text_area("Enter Prompt Text")
 
-    if st.button("Predict Scores"):
+    if st.button("Predict Band"):
         try:
             # Combine prompt and essay
             feature_text = f"{prompt} {essay}"
@@ -69,16 +69,13 @@ if model:
                 outputs = model(input_ids, attention_mask=attention_mask)
                 logits = outputs.logits  # Assuming your model returns logits
 
-                # Assuming your model outputs 5 values (band, TA, CC, LR, GRA)
-                predictions = torch.sigmoid(logits).cpu().numpy()[0]  # Apply sigmoid for probabilities
+                # Get the predicted class
+                predicted_class = torch.argmax(logits, dim=-1).item()
 
-                # Display the predictions
-                st.write("### Predicted Scores:")
-                st.write(f"Band: {predictions[0]:.2f}")
-                st.write(f"Task Achievement: {predictions[1]:.2f}")
-                st.write(f"Coherence & Cohesion: {predictions[2]:.2f}")
-                st.write(f"Lexical Resource: {predictions[3]:.2f}")
-                st.write(f"Grammatical Range & Accuracy: {predictions[4]:.2f}")
+                # Map the predicted class to a band label
+                band_label = "Above 5" if predicted_class == 1 else "5 or Below"
+
+                st.success(f"Predicted Band: {band_label}")
 
         except Exception as e:
             st.error(f"Prediction error: {e}")
