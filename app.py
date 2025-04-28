@@ -46,7 +46,7 @@ def get_embeddings(text):
     st.write("Last Hidden State Shape:", outputs.last_hidden_state.shape)
 
     # Extract the CLS token embedding (first token in the sequence)
-    embeddings = outputs.last_hidden_state[:, 0, :].squeeze().numpy()
+    embeddings = outputs.last_hidden_state[:, 0, :].detach().cpu().numpy()  # Move tensor to CPU before converting to NumPy
 
     return embeddings
 
