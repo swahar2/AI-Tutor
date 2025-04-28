@@ -24,7 +24,10 @@ model = load_model(repo_id, filename)
 
 # Load RoBERTa tokenizer and model (should match the training setup)
 tokenizer = AutoTokenizer.from_pretrained('roberta-base')
-roberta_model = AutoModel.from_pretrained('roberta-base')
+roberta_model = AutoModel.from_pretrained('roberta-base').to('cpu')  # Force model to load on CPU
+
+# Debugging: Check where the model is loaded
+st.write("RoBERTa Model Device:", next(roberta_model.parameters()).device)
 
 # Function to generate embeddings using RoBERTa
 def get_embeddings(text):
@@ -33,7 +36,7 @@ def get_embeddings(text):
         return np.zeros((768,))  # Return a zero vector (768 is the default embedding size for RoBERTa)
 
     # Tokenize the input text
-    inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=512)
+    inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=512).to('cpu')  # Move inputs to CPU
 
     # Debugging: Check the tokenizer output shape
     st.write("Tokenizer Input IDs Shape:", inputs['input_ids'].shape)
