@@ -1,9 +1,9 @@
 streamlit==1.32.2
 pandas==2.2.1
-xgboost==1.7.6
-joblib
-huggingface-hub==0.17.1
-scikit-learn==1.3.0
+xgboost==2.0.3
+joblib==1.4.0
+huggingface_hub==0.23.1
+scikit-learn==1.4.2
 numpy==1.26.4
-transformers==4.33.2
-torch==2.0.1
+transformers==4.36.2
+torch==2.2.2
