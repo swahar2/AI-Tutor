@@ -14,7 +14,7 @@ filename = "xgboost_best_model.pkl"      # The name of the saved model in the re
 @st.cache_resource
 def load_model(repo_id, filename):
     # Download the model from Hugging Face repository
-    model_path = hf_hub(repo_id=repo_id, filename=filename)
+    model_path = hf_hub_download(repo_id=repo_id, filename=filename)
     # Load the model using joblib
     model = joblib.load(model_path)
     return model

@@ -7,3 +7,4 @@ scikit-learn
 numpy
 transformers == 4.51.3
 torch
+huggingface_hub
