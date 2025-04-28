@@ -10,7 +10,7 @@ import torch
 repo_id = "swahar2/AI-Tutor"  # Replace with your repository name
 filename = "xgboost_best_model.pkl"      # The name of the saved model in the repository
 
-# Function to load the model from Hugging Face Hub
+# Function to load the XGBoost model from Hugging Face Hub
 @st.cache_resource
 def load_model(repo_id, filename):
     # Download the model from Hugging Face repository
@@ -19,10 +19,10 @@ def load_model(repo_id, filename):
     model = joblib.load(model_path)
     return model
 
-# Load the model
+# Load the XGBoost model
 model = load_model(repo_id, filename)
 
-# Determine device (CPU or GPU)
+# Determine the device (CPU or GPU)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 st.write(f"Using device: {device}")
 
