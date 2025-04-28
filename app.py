@@ -24,7 +24,7 @@ model = load_model(repo_id, filename)
 
 # Load RoBERTa tokenizer and model (should match the training setup)
 tokenizer = AutoTokenizer.from_pretrained('roberta-base')
-roberta_model = AutoModel.from_pretrained('roberta-base').to('cpu')  # Force model to load on CPU
+roberta_model = AutoModel.from_pretrained('roberta-base', torch_dtype=torch.float32).to('cpu')  # Force full weight initialization on CPU
 
 # Debugging: Check where the model is loaded
 st.write("RoBERTa Model Device:", next(roberta_model.parameters()).device)
