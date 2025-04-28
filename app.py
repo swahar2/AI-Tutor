@@ -5,7 +5,7 @@ from huggingface_hub import hf_hub_url, HfApi
 import joblib
 
 # Define Hugging Face Repository Details
-repo_id = "<your-username>/band-score-prediction"  # Replace with your repository name
+repo_id = "swahar2/AI-Tutor"  # Replace with your repository name
 filename = "xgboost_best_model.pkl"               # The name of the saved model in the repository
 
 # Function to load the model from Hugging Face Hub
