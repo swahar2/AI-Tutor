@@ -28,10 +28,26 @@ roberta_model = AutoModel.from_pretrained('roberta-base')
 
 # Function to generate embeddings using RoBERTa
 def get_embeddings(text):
+    # Check if the input text is empty
+    if not text.strip():
+        return np.zeros((768,))  # Return a zero vector (768 is the default embedding size for RoBERTa)
+
+    # Tokenize the input text
     inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=512)
+
+    # Debugging: Check the tokenizer output shape
+    st.write("Tokenizer Input IDs Shape:", inputs['input_ids'].shape)
+
+    # Get the model's output
     with torch.no_grad():
         outputs = roberta_model(**inputs)
-        embeddings = outputs.last_hidden_state[:, 0, :].squeeze().numpy()  # CLS token
+
+    # Debugging: Check the last_hidden_state tensor shape
+    st.write("Last Hidden State Shape:", outputs.last_hidden_state.shape)
+
+    # Extract the CLS token embedding (first token in the sequence)
+    embeddings = outputs.last_hidden_state[:, 0, :].squeeze().numpy()
+
     return embeddings
 
 # Streamlit app title
@@ -59,6 +75,15 @@ grammatical_score = st.number_input(
 
 # Predict button
 if st.button("Predict Band Score"):
+    # Check for empty inputs
+    if not essay_input.strip():
+        st.error("Essay input is empty. Please provide a valid essay.")
+        st.stop()
+
+    if not prompt_input.strip():
+        st.error("Prompt input is empty. Please provide a valid prompt.")
+        st.stop()
+
     # Generate RoBERTa embeddings for the essay and prompt
     essay_embedding = get_embeddings(essay_input)
     prompt_embedding = get_embeddings(prompt_input)
