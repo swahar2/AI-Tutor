@@ -5,3 +5,5 @@ joblib
 huggingface-hub
 scikit-learn
 numpy
+transformers == 4.51.3
+torch
