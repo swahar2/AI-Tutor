@@ -64,8 +64,8 @@ if st.button("Predict Band Score"):
     prompt_embedding = get_embeddings(prompt_input)
 
     # Debugging: Check shapes of features
-    #st.write("Essay Embedding Shape:", essay_embedding.shape)
-    #st.write("Prompt Embedding Shape:", prompt_embedding.shape)
+    st.write("Essay Embedding Shape:", essay_embedding.shape)
+    st.write("Prompt Embedding Shape:", prompt_embedding.shape)
 
     # Reshape embeddings to ensure they are 2D arrays
     essay_embedding = essay_embedding.reshape(1, -1)  # Reshape to (1, embedding_size)
@@ -76,7 +76,7 @@ if st.button("Predict Band Score"):
     input_features = np.hstack((essay_embedding, prompt_embedding, numeric_features))
 
     # Debugging: Check final shape
-    #st.write("Combined Input Features Shape:", input_features.shape)
+    st.write("Combined Input Features Shape:", input_features.shape)
 
     # Make prediction
     prediction = model.predict(input_features)[0]
