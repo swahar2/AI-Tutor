@@ -1,24 +1,23 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from huggingface_hub import hf_hub_url, HfApi
 import joblib
+import urllib.request
 
-# Define Hugging Face Repository Details
-repo_id = "swahar2/AI-Tutor"  # Replace with your repository name
-filename = "xgboost_best_model.pkl"               # The name of the saved model in the repository
+# Define the URL to your model on Hugging Face
+model_url = "https://huggingface.co/swahar2/AI-Tutor/resolve/main/xgboost_best_model.pkl"
 
 # Function to load the model from Hugging Face Hub
 @st.cache_resource
-def load_model(repo_id, filename):
-    # Generate the URL to the model file
-    model_url = hf_hub_url(repo_id=repo_id, filename=filename)
-    # Load the model directly from the URL
-    model = joblib.load(model_url)
+def load_model(url):
+    # Download the model file from the URL
+    file_path, _ = urllib.request.urlretrieve(url, "xgboost_best_model.pkl")
+    # Load the model using joblib
+    model = joblib.load(file_path)
     return model
 
 # Load the model
-model = load_model(repo_id, filename)
+model = load_model(model_url)
 
 # Streamlit app title
 st.title("Band Score Prediction App 🎓")
