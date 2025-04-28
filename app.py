@@ -22,9 +22,13 @@ def load_model(repo_id, filename):
 # Load the model
 model = load_model(repo_id, filename)
 
-# Load RoBERTa tokenizer and model (should match the training setup)
+# Determine device (CPU or GPU)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+st.write(f"Using device: {device}")
+
+# Load RoBERTa tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained('roberta-base')
-roberta_model = AutoModel.from_pretrained('roberta-base', torch_dtype=torch.float32).to('cpu')  # Force full weight initialization on CPU
+roberta_model = AutoModel.from_pretrained('roberta-base', low_cpu_mem_usage=False).to(device)
 
 # Debugging: Check where the model is loaded
 st.write("RoBERTa Model Device:", next(roberta_model.parameters()).device)
@@ -36,7 +40,7 @@ def get_embeddings(text):
         return np.zeros((768,))  # Return a zero vector (768 is the default embedding size for RoBERTa)
 
     # Tokenize the input text
-    inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=512).to('cpu')  # Move inputs to CPU
+    inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=512).to(device)
 
     # Debugging: Check the tokenizer output shape
     st.write("Tokenizer Input IDs Shape:", inputs['input_ids'].shape)
